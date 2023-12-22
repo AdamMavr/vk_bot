@@ -15,37 +15,45 @@ func main() {
 		log.Println(err)
 	}
 
-	stringHoroscopes := strings.Join(allHoroscopes, "\n")
+	//fmt.Println(allHoroscopes)
+	fmt.Println(getHoroscope(allHoroscopes, "Телец"))
 
-	fmt.Println(stringHoroscopes)
-
-	for _, t := range allHoroscopes {
-		stringHoroscopes += t
-	}
 }
 
-// GetTexts возвращает текстовое представление элементов
-// по selector на странице c переданным url
-func GetTexts(url, selector string) ([]string, error) {
+// GetTexts возвращает текстовое представление элементов по selector на странице c переданным url
+func GetTexts(url, selector string) (string, error) {
 
 	// Скачиваем html-страницу
 	resp, err := http.Get(url)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	// Считываем страницу в goquery-документ
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	// Находим все элементы с переданным селектором
-	// и сохраняем их содержимое в список
-	var texts []string
+	// Находим все элементы с переданным селектором и сохраняем их содержимое в строку
+	var stringHoroscopes strings.Builder
 	doc.Find(selector).First().Each(func(i int, s *goquery.Selection) {
-		texts = append(texts, s.Text())
+		stringHoroscopes.WriteString(s.Text())
 	})
 
-	return texts, nil
+	return strings.ReplaceAll(stringHoroscopes.String(), "\n", ""), nil
+}
+
+func getHoroscope(allHoroscopes, sign string) string {
+	start := sign
+	end := []string{"♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"}
+
+	startIndex := strings.Index(allHoroscopes, start)
+	endIndex := strings.IndexAny(allHoroscopes[startIndex:], strings.Join(end, ""))
+
+	if startIndex == -1 || endIndex == -1 {
+		return ""
+	}
+
+	return sign + allHoroscopes[startIndex+len(start):startIndex+endIndex]
 }
