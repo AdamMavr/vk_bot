@@ -4,18 +4,23 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
 func main() {
-	titles, err := GetTexts("https://t.me/s/neural_horo", ".tgme_widget_message_text")
+	allHoroscopes, err := GetTexts("https://t.me/s/neural_horo", ".tgme_widget_message_text")
 	if err != nil {
 		log.Println(err)
 	}
 
-	for _, t := range titles {
-		fmt.Println(t)
+	stringHoroscopes := strings.Join(allHoroscopes, "\n")
+
+	fmt.Println(stringHoroscopes)
+
+	for _, t := range allHoroscopes {
+		stringHoroscopes += t
 	}
 }
 
