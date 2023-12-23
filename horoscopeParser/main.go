@@ -15,8 +15,8 @@ func main() {
 		log.Println(err)
 	}
 
-	//fmt.Println(allHoroscopes)
-	fmt.Println(getHoroscope(allHoroscopes, "Телец"))
+	fmt.Println(allHoroscopes)
+	//fmt.Println(GetHoroscope(AllHoroscopes, "Телец"))
 
 }
 
@@ -37,14 +37,14 @@ func GetTexts(url, selector string) (string, error) {
 
 	// Находим все элементы с переданным селектором и сохраняем их содержимое в строку
 	var stringHoroscopes strings.Builder
-	doc.Find(selector).First().Each(func(i int, s *goquery.Selection) {
+	doc.Find(selector).Last().Each(func(i int, s *goquery.Selection) {
 		stringHoroscopes.WriteString(s.Text())
 	})
 
 	return strings.ReplaceAll(stringHoroscopes.String(), "\n", ""), nil
 }
 
-func getHoroscope(allHoroscopes, sign string) string {
+func GetHoroscope(allHoroscopes, sign string) string {
 	start := sign
 	end := []string{"♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"}
 
