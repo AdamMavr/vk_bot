@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -17,6 +18,8 @@ func main() {
 
 	fmt.Println(allHoroscopes)
 	//fmt.Println(GetHoroscope(AllHoroscopes, "Телец"))
+	today := time.Now().Format("23.04.2023")
+	fmt.Printf("Type: %T", today)
 
 }
 
@@ -41,7 +44,7 @@ func GetTexts(url, selector string) (string, error) {
 		stringHoroscopes.WriteString(s.Text())
 	})
 
-	return strings.ReplaceAll(stringHoroscopes.String(), "\n", ""), nil
+	return strings.ToLower(strings.ReplaceAll(stringHoroscopes.String(), "\n", "")), nil
 }
 
 func GetHoroscope(allHoroscopes, sign string) string {

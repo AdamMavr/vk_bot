@@ -10,14 +10,12 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
-
-// TOKEN токен паблика
-const TOKEN = "vk1.a.LFbHvvXgaj7mtfilwL7-1rt2_hrzH7JkvBAVBrEP4yDY_d1euPPLF0snfetL3gpOj7Cr-f0m6-sJvkyVihE7XlK8pzaketUW5EwzqyD9p9XqEar76W3TkavFfZx6B7F013SCTTp0_JLbWwcxnmuWyQt2_Mrgoxulgn6-oYnjnVUPRBmJZCSyRR0s8Nh1wjOxyiAw0o5avDee2KjdnNd31Q"
 
 // стартовая точка программы
 func main() {
-	vk := api.NewVK(TOKEN)
+	vk := api.NewVK("TOKEN")
 
 	// получаем информацию о группе (id через токен)
 	group, err := vk.GroupsGetByID(nil)
@@ -41,7 +39,7 @@ func main() {
 	lp.MessageNew(func(_ context.Context, obj events.MessageNewObject) {
 		log.Printf("%d: %s", obj.Message.ID, obj.Message.Text)
 
-		if strings.HasPrefix(obj.Message.Text, "гроб") {
+		if strings.HasPrefix(strings.ToLower(obj.Message.Text), "аска") {
 			// Обрабатываем команду "гроб гороскоп знак_зодиака"
 			if strings.Contains(obj.Message.Text, "гороскоп") {
 				// Получаем знак зодиака из сообщения
@@ -93,12 +91,14 @@ func GetTexts(url, selector string) (string, error) {
 		stringHoroscopes.WriteString(s.Text())
 	})
 
-	return strings.ReplaceAll(stringHoroscopes.String(), "\n", ""), nil
+	return strings.ToLower(strings.ReplaceAll(stringHoroscopes.String(), "\n", "")), nil
 }
 
 // GetHoroscope функция для получения конкретного гороскопа для знака зодиака
 func GetHoroscope(allHoroscopes, sign string) string {
-	start := sign
+	strings.ToLower(sign)
+	today := time.Now().Format("02.01.2006")
+	start := strings.ToLower(sign)
 	end := []string{"♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"}
 
 	startIndex := strings.Index(allHoroscopes, start)
@@ -111,5 +111,5 @@ func GetHoroscope(allHoroscopes, sign string) string {
 	horoscope := allHoroscopes[startIndex+len(start) : startIndex+endIndex]
 
 	// Возвращаем отформатированную строку
-	return sign + horoscope
+	return sign + " гороскоп на сегодня(" + today + ")" + horoscope
 }
